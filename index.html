@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SPOON - For feeding gains to the trenchers</title>
+    <title>Spoon</title>
+    <link rel="icon" type="image/png" href="images/favicon.png">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Creepster&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Creepster&family=Metal+Mania&display=swap');
         
         * {
             margin: 0;
@@ -35,6 +36,7 @@
             letter-spacing: 12px;
             margin-bottom: 15px;
             transform: rotate(-2deg);
+            font-family: 'Metal Mania', cursive;
         }
         
         .subtitle {
@@ -56,6 +58,96 @@
             font-size: 1.5rem;
             z-index: 1001;
             box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+        
+        .navigation {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1001;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .nav-button {
+            background: rgba(136, 136, 136, 0.9);
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 25px;
+            font-size: 1rem;
+            font-family: 'Metal Mania', cursive;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            min-width: 150px;
+            text-decoration: none;
+        }
+        
+        .nav-button:hover {
+            background: rgba(102, 102, 102, 0.9);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+        }
+        
+        .nav-button img {
+            width: 28px;
+            height: 28px;
+            object-fit: contain;
+        }
+        
+        .copy-button {
+            background: rgba(136, 136, 136, 0.9);
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 25px;
+            font-size: 1rem;
+            font-family: 'Metal Mania', cursive;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            min-width: 150px;
+        }
+        
+        .copy-button:hover {
+            background: rgba(102, 102, 102, 0.9);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+        }
+        
+        .copy-button img {
+            width: 28px;
+            height: 28px;
+            object-fit: contain;
+        }
+        
+        .copy-feedback {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(136, 136, 136, 0.95);
+            color: white;
+            padding: 20px 40px;
+            border-radius: 25px;
+            font-size: 1.2rem;
+            font-family: 'Metal Mania', cursive;
+            z-index: 2000;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .copy-feedback.show {
+            opacity: 1;
         }
         
         .game-area {
@@ -144,6 +236,25 @@
     </style>
 </head>
 <body>
+    <div class="navigation">
+        <a href="https://x.com/" class="nav-button">
+            <img src="images/x.png" alt="Home" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjgiIGhlaWdodD0iMjgiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTMgOUw5IDNMMTUgOVYyMEgxMlYxNEg2VjIwSDNWOVoiIGZpbGw9IndoaXRlIi8+Cjwvc3ZnPgo='">
+            Community
+        </a>
+        <a href="https://dexscreener.com" class="nav-button">
+            <img src="images/dex.png" alt="Leaderboard" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjgiIGhlaWdodD0iMjgiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMTIiIGN5PSIxMiIgcj0iMTAiIGZpbGw9IndoaXRlIi8+CjxwYXRoIGQ9Ik04IDEyVjE2SDE2VjEySDhaIiBmaWxsPSIjMDAwIi8+Cjwvc3ZnPgo='">
+            Dexscreener
+        </a>
+        <a href="https://pump.fun/board" class="nav-button">
+            <img src="images/pump.png" alt="Shop" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjgiIGhlaWdodD0iMjgiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTcgNEg1VjZINFY0QzQgMi45IDQuOSAyIDYgMkg4QzguNTUgMiA5IDIuNDUgOSAzUzguNTUgNCA4IDRINy43NVY0WiIgZmlsbD0id2hpdGUiLz4KPHBhdGggZD0iTTggNkg2VjE4SDE4VjZIOFoiIGZpbGw9IndoaXRlIi8+CjxwYXRoIGQ9Ik0yMCA2SDIyVjhIMjBWNloiIGZpbGw9IndoaXRlIi8+CjxwYXRoIGQ9Ik0xOCAyMEg2VjE4SDE4VjIwWiIgZmlsbD0id2hpdGUiLz4KPC9zdmc+Cg=='">
+            Pump fun
+        </a>
+        <button class="copy-button" onclick="copyToClipboard()">
+            <img src="images/copy.png" alt="Copy" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjgiIGhlaWdodD0iMjgiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTE2IDFIM0M0LjEgMSA1IDEuOSA1IDNWMTdIMy45OUMzLjQ0IDE3IDMgMTYuNTUgMyAxNlYzQzMgMS4zNSA0LjM1IDAgNiAwSDE0QzE0LjY1IDAgMTUgMC4zNSAxNSAxVjNIMTZaTTkgNUgyMUMzMS4xIDUgMjIgNS45IDIyIDdWMjBDMjIgMjEuMSAyMS4xIDIyIDIwIDIySDlDNy45IDIyIDcgMjEuMSA3IDIwVjdDNyA1LjkgNy45IDUgOSA1WiIgZmlsbD0id2hpdGUiLz4KPC9zdmc+Cg=='">
+            Copy CA
+        </button>
+    </div>
+    
     <div class="header">
         <h1 class="title">SPOON</h1>
         <p class="subtitle">For feeding gains to the trenchers</p>
@@ -160,6 +271,10 @@
     <div class="instructions">
         Move your spoon to catch the falling coins!
     </div>
+    
+    <div class="copy-feedback" id="copyFeedback">
+        Contact address copied to clipboard!
+    </div>
 
     <script>
         let coinCount = 0;
@@ -170,10 +285,70 @@
         const spoonCursor = document.getElementById('spoonCursor');
         const coinCountElement = document.getElementById('coinCount');
         
+        // Copy to clipboard function
+        async function copyToClipboard() {
+            const textToCopy = "coming soon";
+            const feedbackElement = document.getElementById('copyFeedback');
+            
+            try {
+                await navigator.clipboard.writeText(textToCopy);
+                
+                // Show feedback
+                feedbackElement.classList.add('show');
+                
+                // Hide feedback after 2 seconds
+                setTimeout(() => {
+                    feedbackElement.classList.remove('show');
+                }, 2000);
+                
+            } catch (err) {
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = textToCopy;
+                document.body.appendChild(textArea);
+                textArea.focus();
+                textArea.select();
+                try {
+                    document.execCommand('copy');
+                    feedbackElement.classList.add('show');
+                    setTimeout(() => {
+                        feedbackElement.classList.remove('show');
+                    }, 2000);
+                } catch (fallbackErr) {
+                    console.error('Fallback: Could not copy text');
+                }
+                document.body.removeChild(textArea);
+            }
+        }
+        
         // Custom cursor movement
         document.addEventListener('mousemove', (e) => {
-            spoonCursor.style.left = e.clientX + 'px';
-            spoonCursor.style.top = e.clientY + 'px';
+            const navButtons = document.querySelectorAll('.nav-button, .copy-button');
+            let nearButton = false;
+            
+            // Check if cursor is near any navigation button
+            navButtons.forEach(button => {
+                const rect = button.getBoundingClientRect();
+                const padding = 50; // Distance threshold
+                
+                if (e.clientX >= rect.left - padding &&
+                    e.clientX <= rect.right + padding &&
+                    e.clientY >= rect.top - padding &&
+                    e.clientY <= rect.bottom + padding) {
+                    nearButton = true;
+                }
+            });
+            
+            // Show/hide spoon cursor and enable/disable normal cursor
+            if (nearButton) {
+                spoonCursor.style.display = 'none';
+                document.body.style.cursor = 'pointer';
+            } else {
+                spoonCursor.style.display = 'block';
+                document.body.style.cursor = 'none';
+                spoonCursor.style.left = e.clientX + 'px';
+                spoonCursor.style.top = e.clientY + 'px';
+            }
         });
         
         // Create a coin
