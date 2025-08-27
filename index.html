@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SPOON - For feeding gains to the trenchers</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Creepster&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: white;
+            overflow: hidden;
+            cursor: none;
+            font-family: 'Creepster', cursive;
+            height: 100vh;
+        }
+        
+        .header {
+            text-align: center;
+            padding: 20px;
+            position: relative;
+            z-index: 1000;
+        }
+        
+        .title {
+            font-size: 6rem;
+            color: #888;
+            text-shadow: 4px 4px 0px #666;
+            letter-spacing: 12px;
+            margin-bottom: 15px;
+            transform: rotate(-2deg);
+        }
+        
+        .subtitle {
+            font-size: 1.8rem;
+            color: #999;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            transform: rotate(1deg);
+        }
+        
+        .counter {
+            position: fixed;
+            top: 20px;
+            right: 30px;
+            background: rgba(136, 136, 136, 0.9);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 50px;
+            font-size: 1.5rem;
+            z-index: 1001;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+        
+        .game-area {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+        
+        .coin {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            background-size: contain;
+            background-repeat: no-repeat;
+            animation: fall linear, flip linear;
+            z-index: 100;
+        }
+        
+        @keyframes fall {
+            from {
+                top: -50px;
+            }
+            to {
+                top: 100vh;
+            }
+        }
+        
+        @keyframes flip {
+            0% { transform: rotateY(0deg); }
+            25% { transform: rotateY(90deg); }
+            50% { transform: rotateY(180deg); }
+            75% { transform: rotateY(270deg); }
+            100% { transform: rotateY(360deg); }
+        }
+        
+        .spoon-cursor {
+            position: fixed;
+            width: 240px;
+            height: 240px;
+            background: url('images/cursor.png');
+            background-size: contain;
+            background-repeat: no-repeat;
+            pointer-events: none;
+            z-index: 10000;
+            transform: translate(-120px, -120px);
+        }
+        
+        .instructions {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #888;
+            font-size: 1rem;
+            text-align: center;
+            z-index: 1001;
+        }
+        
+        .coin-collected {
+            animation: collect 0.5s ease-out forwards;
+        }
+        
+        @keyframes collect {
+            0% { 
+                transform: scale(1) rotateY(0deg);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(1.5) rotateY(180deg);
+                opacity: 0.8;
+            }
+            100% { 
+                transform: scale(0) rotateY(360deg);
+                opacity: 0;
+            }
+        }
+        
+        /* Coin variations */
+        .coin1 { background-image: url('images/coin1.png'); }
+        .coin2 { background-image: url('images/coin2.png'); }
+        .coin3 { background-image: url('images/coin3.png'); }
+        .coin4 { background-image: url('images/coin4.png'); }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1 class="title">SPOON</h1>
+        <p class="subtitle">For feeding gains to the trenchers</p>
+    </div>
+    
+    <div class="counter">
+        Coins: <span id="coinCount">0</span>
+    </div>
+    
+    <div class="game-area" id="gameArea"></div>
+    
+    <div class="spoon-cursor" id="spoonCursor"></div>
+    
+    <div class="instructions">
+        Move your spoon to catch the falling coins!
+    </div>
+
+    <script>
+        let coinCount = 0;
+        let coins = [];
+        let gameRunning = true;
+        
+        const gameArea = document.getElementById('gameArea');
+        const spoonCursor = document.getElementById('spoonCursor');
+        const coinCountElement = document.getElementById('coinCount');
+        
+        // Custom cursor movement
+        document.addEventListener('mousemove', (e) => {
+            spoonCursor.style.left = e.clientX + 'px';
+            spoonCursor.style.top = e.clientY + 'px';
+        });
+        
+        // Create a coin
+        function createCoin() {
+            const coin = document.createElement('div');
+            const coinTypes = ['coin1', 'coin2', 'coin3', 'coin4'];
+            const coinType = coinTypes[Math.floor(Math.random() * coinTypes.length)];
+            
+            coin.className = `coin ${coinType}`;
+            coin.style.left = Math.random() * (window.innerWidth - 40) + 'px';
+            
+            // Set animation duration (fall speed)
+            const fallDuration = Math.random() * 3 + 2; // 2-5 seconds
+            const flipDuration = Math.random() * 1 + 0.5; // 0.5-1.5 seconds
+            
+            coin.style.animationDuration = `${fallDuration}s, ${flipDuration}s`;
+            coin.style.animationIterationCount = '1, infinite';
+            
+            gameArea.appendChild(coin);
+            coins.push({
+                element: coin,
+                collected: false,
+                value: getPointValue(coinType)
+            });
+            
+            // Remove coin after animation
+            setTimeout(() => {
+                if (coin.parentNode && !coin.classList.contains('coin-collected')) {
+                    coin.remove();
+                    coins = coins.filter(c => c.element !== coin);
+                }
+            }, fallDuration * 1000);
+        }
+        
+        function getPointValue(coinType) {
+            switch(coinType) {
+                case 'coin1': return 1;
+                case 'coin2': return 5;
+                case 'coin3': return 10;
+                case 'coin4': return 50;
+                default: return 1;
+            }
+        }
+        
+        // Check collision between spoon and coins
+        function checkCollisions() {
+            const spoonRect = spoonCursor.getBoundingClientRect();
+            
+            // Only use the right half of the spoon for collision detection
+            const spoonCollisionArea = {
+                left: spoonRect.left + (spoonRect.width / 2), // Only right half
+                right: spoonRect.right,
+                top: spoonRect.top,
+                bottom: spoonRect.bottom
+            };
+            
+            coins.forEach(coinObj => {
+                if (!coinObj.collected) {
+                    const coinRect = coinObj.element.getBoundingClientRect();
+                    
+                    // Check if right half of spoon and coin overlap
+                    if (spoonCollisionArea.left < coinRect.right &&
+                        spoonCollisionArea.right > coinRect.left &&
+                        spoonCollisionArea.top < coinRect.bottom &&
+                        spoonCollisionArea.bottom > coinRect.top) {
+                        
+                        // Collect the coin
+                        coinObj.collected = true;
+                        coinCount += coinObj.value;
+                        coinCountElement.textContent = coinCount;
+                        
+                        // Add collection animation
+                        coinObj.element.classList.add('coin-collected');
+                        
+                        // Remove after animation
+                        setTimeout(() => {
+                            if (coinObj.element.parentNode) {
+                                coinObj.element.remove();
+                            }
+                        }, 500);
+                    }
+                }
+            });
+        }
+        
+        // Game loop
+        function gameLoop() {
+            if (gameRunning) {
+                checkCollisions();
+                requestAnimationFrame(gameLoop);
+            }
+        }
+        
+        // Start spawning coins
+        function startCoinSpawning() {
+            setInterval(() => {
+                if (gameRunning) {
+                    createCoin();
+                }
+            }, 800); // New coin every 0.8 seconds
+        }
+        
+        // Initialize game
+        startCoinSpawning();
+        gameLoop();
+        
+        // Pause game when window loses focus
+        window.addEventListener('blur', () => {
+            gameRunning = false;
+        });
+        
+        window.addEventListener('focus', () => {
+            gameRunning = true;
+            gameLoop();
+        });
+    </script>
+</body>
+</html>
