@@ -6,7 +6,7 @@
     <title>Spoon</title>
     <link rel="icon" type="image/png" href="images/favicon.png">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Creepster&family=Metal+Mania&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Creepster&family=Metal+Mania&family=Anton&family=Oswald:wght@700&family=Bebas+Neue&display=swap');
         
         * {
             margin: 0;
@@ -31,12 +31,17 @@
         
         .title {
             font-size: 6rem;
-            color: #888;
-            text-shadow: 4px 4px 0px #666;
-            letter-spacing: 12px;
+            color: #333;
+            text-shadow: 
+                2px 2px 0px #666,
+                4px 4px 0px #888,
+                6px 6px 0px #aaa;
+            letter-spacing: 8px;
             margin-bottom: 15px;
-            transform: rotate(-2deg);
-            font-family: 'Metal Mania', cursive;
+            transform: rotate(-1deg);
+            font-family: 'Anton', sans-serif;
+            font-weight: 400;
+            text-transform: uppercase;
         }
         
         .subtitle {
@@ -235,7 +240,7 @@
         }
         
         @keyframes heavyFall {
-            from { top: -50px; }
+            from { top: -100px; }
             to { top: 100vh; }
         }
         
@@ -303,7 +308,7 @@
     </div>
     
     <div class="header">
-        <h1 class="title">SPOON</h1>
+        <h1 class="title">$SPOON</h1>
         <p class="subtitle">For feeding gains to the trenchers</p>
     </div>
     
@@ -490,6 +495,18 @@
                         coinObj.collected = true;
                         coinCount += coinObj.value;
                         coinCountElement.textContent = coinCount;
+                        
+                        // Play collection sound
+                        try {
+                            collectSound.currentTime = 0; // Reset to start
+                            collectSound.volume = 0.5; // Set volume to 50%
+                            const playPromise = collectSound.play();
+                            if (playPromise !== undefined) {
+                                playPromise.catch(e => console.log('Audio play failed:', e));
+                            }
+                        } catch (e) {
+                            console.log('Audio error:', e);
+                        }
                         
                         // Add collection animation
                         coinObj.element.classList.add('coin-collected');
