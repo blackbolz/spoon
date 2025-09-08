@@ -289,7 +289,7 @@
 </head>
 <body>
     <div class="navigation">
-        <a href="https://x.com" class="nav-button">
+        <a href="https://x.com/i/communities/1965060260017942603" class="nav-button">
             <img src="images/x.png" alt="Home" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjgiIGhlaWdodD0iMjgiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTMgOUw5IDNMMTUgOVYyMEgxMlYxNEg2VjIwSDNWOVoiIGZpbGw9IndoaXRlIi8+Cjwvc3ZnPgo='">
             Community
         </a>
@@ -336,6 +336,25 @@
         const gameArea = document.getElementById('gameArea');
         const spoonCursor = document.getElementById('spoonCursor');
         const coinCountElement = document.getElementById('coinCount');
+        
+        // Create audio object for sound effects
+        const collectSound = new Audio('images/sound.mp3');
+        collectSound.preload = 'auto';
+        collectSound.volume = 0.7; // Set volume to 70% (adjust as needed)
+        
+        // Function to play collect sound
+        function playCollectSound() {
+            try {
+                // Clone the audio to allow multiple overlapping sounds
+                const soundClone = collectSound.cloneNode();
+                soundClone.volume = collectSound.volume;
+                soundClone.play().catch(error => {
+                    console.log('Audio play failed:', error);
+                });
+            } catch (error) {
+                console.log('Audio error:', error);
+            }
+        }
         
         // Copy to clipboard function
         async function copyToClipboard() {
@@ -496,17 +515,8 @@
                         coinCount += coinObj.value;
                         coinCountElement.textContent = coinCount;
                         
-                        // Play collection sound
-                        try {
-                            collectSound.currentTime = 0; // Reset to start
-                            collectSound.volume = 0.5; // Set volume to 50%
-                            const playPromise = collectSound.play();
-                            if (playPromise !== undefined) {
-                                playPromise.catch(e => console.log('Audio play failed:', e));
-                            }
-                        } catch (e) {
-                            console.log('Audio error:', e);
-                        }
+                        // Play sound effect
+                        playCollectSound();
                         
                         // Add collection animation
                         coinObj.element.classList.add('coin-collected');
@@ -538,6 +548,43 @@
                 }
             }, 400); // New coin every 0.4 seconds (twice as fast)
         }
+        
+        // Initialize audio context on first user interaction (required by browsers)
+        function enableAudio() {
+            if (!audioEnabled) {
+                console.log('Enabling audio...');
+                // Test play the first audio to unlock browser audio
+                const testAudio = audioPool[0];
+                if (testAudio) {
+                    testAudio.play().then(() => {
+                        testAudio.pause();
+                        testAudio.currentTime = 0;
+                        audioEnabled = true;
+                        console.log('Audio enabled successfully!');
+                        
+                        // Show audio enabled feedback
+                        const instructions = document.querySelector('.instructions');
+                        instructions.textContent = 'Move your spoon to catch the falling coins! 🔊 Sound enabled!';
+                        setTimeout(() => {
+                            instructions.textContent = 'Move your spoon to catch the falling coins!';
+                        }, 2000);
+                        
+                    }).catch(error => {
+                        console.error('Failed to enable audio:', error);
+                        // Try alternative approach
+                        setTimeout(() => {
+                            audioEnabled = true;
+                            console.log('Audio enabled (fallback method)');
+                        }, 500);
+                    });
+                }
+            }
+        }
+        
+        // Add multiple event listeners for better browser support
+        ['click', 'touchstart', 'keydown', 'mousemove'].forEach(eventType => {
+            document.addEventListener(eventType, enableAudio, { once: true });
+        });
         
         // Initialize game
         startCoinSpawning();
