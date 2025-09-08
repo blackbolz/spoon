@@ -284,7 +284,7 @@
 </head>
 <body>
     <div class="navigation">
-        <a href="https://x.com/i/communities/1960826615560110229" class="nav-button">
+        <a href="https://x.com" class="nav-button">
             <img src="images/x.png" alt="Home" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjgiIGhlaWdodD0iMjgiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTMgOUw5IDNMMTUgOVYyMEgxMlYxNEg2VjIwSDNWOVoiIGZpbGw9IndoaXRlIi8+Cjwvc3ZnPgo='">
             Community
         </a>
@@ -308,7 +308,7 @@
     </div>
     
     <div class="counter">
-        Coins: <span id="coinCount">0</span>
+        Gains: <span id="coinCount">0</span> $
     </div>
     
     <div class="game-area" id="gameArea"></div>
@@ -456,10 +456,10 @@
         
         function getPointValue(coinType) {
             switch(coinType) {
-                case 'coin1': return 1;
-                case 'coin2': return 5;
-                case 'coin3': return 10;
-                case 'coin4': return 50;
+                case 'coin1': return 50;
+                case 'coin2': return 100;
+                case 'coin3': return 214;
+                case 'coin4': return 112000;
                 default: return 1;
             }
         }
@@ -519,7 +519,7 @@
                 if (gameRunning) {
                     createCoin();
                 }
-            }, 800); // New coin every 0.8 seconds
+            }, 400); // New coin every 0.4 seconds (twice as fast)
         }
         
         // Initialize game
