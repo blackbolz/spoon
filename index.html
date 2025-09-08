@@ -165,17 +165,59 @@
             height: 40px;
             background-size: contain;
             background-repeat: no-repeat;
-            animation: fall linear, flip linear;
             z-index: 100;
         }
         
+        /* Paper money animation (coin1) - slow drift with tilting */
+        .coin1 {
+            background-image: url('images/coin1.png');
+            animation: paperFall linear, paperDrift ease-in-out infinite, paperTilt ease-in-out infinite;
+            width: 100px;
+            height: 100px;
+        }
+        
+        @keyframes paperFall {
+            from { top: -50px; }
+            to { top: 100vh; }
+        }
+        
+        @keyframes paperDrift {
+            0%, 100% { transform: translateX(0px); }
+            25% { transform: translateX(20px); }
+            75% { transform: translateX(-20px); }
+        }
+        
+        @keyframes paperTilt {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(15deg); }
+            75% { transform: rotate(-15deg); }
+        }
+        
+        /* Pulsing size animation (coin2) - straight fall with size changes */
+        .coin2 {
+            background-image: url('images/coin2.png');
+            animation: straightFall linear, pulse ease-in-out infinite;
+        }
+        
+        @keyframes straightFall {
+            from { top: -50px; }
+            to { top: 100vh; }
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.5); }
+        }
+        
+        /* Original coin animation (coin3) - spinning coin */
+        .coin3 {
+            background-image: url('images/coin3.png');
+            animation: fall linear, flip linear;
+        }
+        
         @keyframes fall {
-            from {
-                top: -50px;
-            }
-            to {
-                top: 100vh;
-            }
+            from { top: -50px; }
+            to { top: 100vh; }
         }
         
         @keyframes flip {
@@ -184,6 +226,17 @@
             50% { transform: rotateY(180deg); }
             75% { transform: rotateY(270deg); }
             100% { transform: rotateY(360deg); }
+        }
+        
+        /* Heavy object animation (coin4) - fast straight fall */
+        .coin4 {
+            background-image: url('images/coin4.png');
+            animation: heavyFall linear;
+        }
+        
+        @keyframes heavyFall {
+            from { top: -50px; }
+            to { top: 100vh; }
         }
         
         .spoon-cursor {
@@ -227,12 +280,6 @@
                 opacity: 0;
             }
         }
-        
-        /* Coin variations */
-        .coin1 { background-image: url('images/coin1.png'); }
-        .coin2 { background-image: url('images/coin2.png'); }
-        .coin3 { background-image: url('images/coin3.png'); }
-        .coin4 { background-image: url('images/coin4.png'); }
     </style>
 </head>
 <body>
@@ -250,7 +297,7 @@
             Pump fun
         </a>
         <button class="copy-button" onclick="copyToClipboard()">
-            <img src="images/copy.png" alt="Copy" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjgiIGhlaWdodD0iMjgiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTE2IDFIM0M0LjEgMSA1IDEuOSA1IDNWMTdIMy45OUMzLjQ0IDE3IDMgMTYuNTUgMyAxNlYzQzMgMS4zNSA0LjM1IDAgNiAwSDE0QzE0LjY1IDAgMTUgMC4zNSAxNSAxVjNIMTZaTTkgNUgyMUMzMS4xIDUgMjIgNS45IDIyIDdWMjBDMjIgMjEuMSAyMS4xIDIyIDIwIDIySDlDNy45IDIyIDcgMjEuMSA3IDIwVjdDNyA1LjkgNy45IDUgOSA1WiIgZmlsbD0id2hpdGUiLz4KPC9zdmc+Cg=='">
+            <img src="images/copy.png" alt="Copy" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjgiIGhlaWdodD0iMjgiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTE2IDFIM0M0LjEgMSA1IDEuOSA1IDNWMTdIMy45OUMzLjQ0IDE3IDMgMTYuNTUgMyAxNlYzQzMgMS4zNSA0LjM1IDAgNiAwSDE0QzE0LjY1IDAgMTUgMC4zNSAxNSAxVjNIMTZaTTkgNUgyMUMzMS4xIDUgMjIgNS45IDIyIDdWMjBDMjIgMjEuMSAyMS4xIDIyIDIwIDIySDBDNy45IDIyIDcgMjEuMSA3IDIwVjdDNyA1LjkgNy45IDUgOSA1WiIgZmlsbD0id2hpdGUiLz4KPC9zdmc+Cg=='">
             Copy CA
         </button>
     </div>
@@ -360,12 +407,36 @@
             coin.className = `coin ${coinType}`;
             coin.style.left = Math.random() * (window.innerWidth - 40) + 'px';
             
-            // Set animation duration (fall speed)
-            const fallDuration = Math.random() * 3 + 2; // 2-5 seconds
-            const flipDuration = Math.random() * 1 + 0.5; // 0.5-1.5 seconds
+            // Set animation duration based on coin type
+            let fallDuration;
+            let animationIterationCount = '1';
             
-            coin.style.animationDuration = `${fallDuration}s, ${flipDuration}s`;
-            coin.style.animationIterationCount = '1, infinite';
+            switch(coinType) {
+                case 'coin1': // Paper money - slow with drift and tilt
+                    fallDuration = Math.random() * 3 + 4; // 4-7 seconds (slower)
+                    coin.style.animationDuration = `${fallDuration}s, 3s, 2s`; // fall, drift, tilt
+                    coin.style.animationIterationCount = '1, infinite, infinite';
+                    break;
+                    
+                case 'coin2': // Pulsing - straight fall with size changes
+                    fallDuration = Math.random() * 2 + 3; // 3-5 seconds
+                    coin.style.animationDuration = `${fallDuration}s, 0.3s`; // fall, pulse
+                    coin.style.animationIterationCount = '1, infinite';
+                    break;
+                    
+                case 'coin3': // Original spinning coin
+                    fallDuration = Math.random() * 3 + 2; // 2-5 seconds
+                    const flipDuration = Math.random() * 1 + 0.5; // 0.5-1.5 seconds
+                    coin.style.animationDuration = `${fallDuration}s, ${flipDuration}s`;
+                    coin.style.animationIterationCount = '1, infinite';
+                    break;
+                    
+                case 'coin4': // Heavy - fast fall
+                    fallDuration = Math.random() * 1 + 0.8; // 0.8-1.8 seconds (very fast)
+                    coin.style.animationDuration = `${fallDuration}s`;
+                    coin.style.animationIterationCount = '1';
+                    break;
+            }
             
             gameArea.appendChild(coin);
             coins.push({
@@ -380,7 +451,7 @@
                     coin.remove();
                     coins = coins.filter(c => c.element !== coin);
                 }
-            }, fallDuration * 1000);
+            }, fallDuration * 1000 + 500); // Add small buffer
         }
         
         function getPointValue(coinType) {
